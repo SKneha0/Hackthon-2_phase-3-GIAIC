@@ -1,0 +1,158 @@
+openapi: 3.0.3
+info:
+  title: AI Todo Chatbot API
+  description: API for Cohere-powered AI chatbot integration with todo application
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+    description: Development server
+paths:
+  /api/{user_id}/chat:
+    post:
+      summary: Process chat message with AI and return response
+      description: |
+        Processes a user's chat message using Cohere AI with tool-calling capabilities.
+        Maintains conversation context and persists messages to database.
+        Requires valid JWT authentication.
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: The ID of the authenticated user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+              properties:
+                message:
+                  type: string
+                  description: The user's chat message
+                  example: "Add task: Buy groceries"
+                conversation_id:
+                  type: string
+                  description: Optional existing conversation ID to continue
+                  example: "conv_abc123"
+      responses:
+        '200':
+          description: Successful response from AI chatbot
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - conversation_id
+                  - response
+                properties:
+                  conversation_id:
+                    type: string
+                    description: The conversation ID (newly created or existing)
+                    example: "conv_abc123"
+                  response:
+                    type: string
+                    description: The AI's response to the user message
+                    example: "I've added the task 'Buy groceries' to your list."
+                  tool_calls:
+                    type: array
+                    description: List of tools that were called during processing
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the tool that was called
+                          example: "add_task"
+                        parameters:
+                          type: object
+                          description: Parameters passed to the tool
+                          example:
+                            title: "Buy groceries"
+                            description: ""
+        '401':
+          description: Unauthorized - Invalid or missing JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Not authenticated"
+        '403':
+          description: Forbidden - User trying to access another user's resources
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Access forbidden"
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "An unexpected error occurred"
+      security:
+        - BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    ChatRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          description: The user's chat message
+          example: "Show my pending tasks"
+        conversation_id:
+          type: string
+          description: Optional existing conversation ID
+          example: "conv_123xyz"
+    ChatResponse:
+      type: object
+      required:
+        - conversation_id
+        - response
+      properties:
+        conversation_id:
+          type: string
+          description: The conversation ID (newly created or existing)
+          example: "conv_abc123"
+        response:
+          type: string
+          description: The AI's response to the user message
+          example: "Here are your pending tasks: 1. Buy groceries, 2. Call mom"
+        tool_calls:
+          type: array
+          description: List of tools that were called during processing
+          items:
+            $ref: '#/components/schemas/ToolCall'
+    ToolCall:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the tool that was called
+          example: "list_tasks"
+        parameters:
+          type: object
+          description: Parameters passed to the tool
+          example:
+            status: "pending"
