@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
 // Base API URL from environment or default to development server
-const API_BASE_URL = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'http://localhost:8000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || 'https://neha112-todo-backend-agent.hf.space';
 
 // Create axios instance with defaults
 const apiClient = axios.create({
