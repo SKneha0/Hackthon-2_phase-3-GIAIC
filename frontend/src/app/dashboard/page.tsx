@@ -38,7 +38,9 @@ const DashboardPage = () => {
     isError: isChatError,
     sendMessage: sendChatMessage,
     resetConversation
-  } = useChat({ userId: user?.id || '' });
+  } = useChat({
+  userId: user?.id ? String(user.id) : ''
+});
 
   useEffect(() => {
     if (!authIsLoading && !isAuthenticated) {
