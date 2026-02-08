@@ -12,12 +12,13 @@ import { Sidebar } from '@/components/navigation/Sidebar';
 import { MobileNav } from '@/components/navigation/MobileNav';
 import { Plus, Sun, Moon, RefreshCw } from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { apiClient } from '@/lib/api';
+// import { apiClient } from '@/lib/api';
 
 // Chat components
 import ChatbotIcon from '@/components/chat/ChatbotIcon';
 import ChatWindow from '@/components/chat/ChatWindow';
 import { useChat } from '@/hooks/useChat';
+import apiClient from '@/lib/api';
 
 const DashboardPage = () => {
   const { user, logout, isAuthenticated, isLoading: authIsLoading } = useAuthContext();
