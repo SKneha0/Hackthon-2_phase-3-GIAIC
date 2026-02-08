@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with default configuration
 export const apiClient = axios.create({
-  baseURL:  'http://localhost:8001/api',
+  baseURL:  'https://neha112-todo-backend-agent.hf.space/api',
   headers: {
     'Content-Type': 'application/json',
   },
